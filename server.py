@@ -8,11 +8,12 @@ app = Flask(__name__)
 MASTER_SALT = b"AEROCARD_CORBIN_DOTHAGE_SOLE_CREATOR_2026_VAULT"
 PAID_HWIDS = {}
 
-# Once you finish Stripe onboarding, paste your 3 Stripe Payment Links in Render -> Environment Variables
+# Paste your actual Stripe Payment Links here once created in your Stripe Dashboard, 
+# or leave them pointing to the automated checkout endpoint route below:
 STRIPE_LINKS = {
-    "PROMO10": os.environ.get("STRIPE_PROMO10_URL", "https://aerocardairepo-1.onrender.com/?notice=setup_pending"),
-    "SUB1999": os.environ.get("STRIPE_SUB1999_URL", "https://aerocardairepo-1.onrender.com/?notice=setup_pending"),
-    "PERP1000": os.environ.get("STRIPE_PERP1000_URL", "https://aerocardairepo-1.onrender.com/?notice=setup_pending"),
+    "PROMO10": os.environ.get("STRIPE_PROMO10_URL", "https://buy.stripe.com/test_promo10"),
+    "SUB1999": os.environ.get("STRIPE_SUB1999_URL", "https://buy.stripe.com/test_sub1999"),
+    "PERP1000": os.environ.get("STRIPE_PERP1000_URL", "https://buy.stripe.com/test_perp1000"),
 }
 
 def generate_key(hwid, tier_code):
@@ -22,7 +23,7 @@ def generate_key(hwid, tier_code):
 
 @app.route("/", methods=["GET"])
 def home():
-    """Official Public Business Homepage for Stripe Verification & Customer Licensing."""
+    """Official Public Business Homepage with Interactive Checkout Buttons."""
     return '''
     <!doctype html>
     <html lang="en">
@@ -37,13 +38,16 @@ def home():
             .header p { margin: 8px 0 0; color: #94a3b8; font-size: 15px; }
             .container { max-width: 960px; margin: 40px auto; padding: 0 20px; }
             .cards { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; }
-            .card { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 25px; width: 270px; text-align: center; }
+            .card { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 25px; width: 270px; text-align: center; display: flex; flex-direction: column; justify-content: space-between; }
             .card h3 { color: #38bdf8; margin-top: 0; }
             .price { font-size: 26px; font-weight: bold; color: #10b981; margin: 15px 0; }
+            .btn { background: #0284c7; color: white; border: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; margin-top: 15px; }
+            .btn:hover { background: #0369a1; }
             .footer { text-align: center; padding: 30px; color: #64748b; font-size: 13px; border-top: 1px solid #1e293b; margin-top: 50px; }
         </style>
     </head>
     <body>
+        .header { background: #1e293b; padding: 28px 20px; text-align: center; border-bottom: 2px solid #0284c7; }
         <div class="header">
             <h1>AeroCardAIStudio™</h1>
             <p>Professional Sports Card & TCG Computer Vision Grading, Market Valuation & Arbitrage Suite</p>
@@ -53,24 +57,33 @@ def home():
             <h2 style="text-align:center; margin-bottom:30px;">Official Software Licensing & Cloud Subscriptions</h2>
             <div class="cards">
                 <div class="card">
-                    <h3>First-Time Email Promo</h3>
-                    <div class="price">$10.00 / mo</div>
-                    <p style="color:#cbd5e1; font-size:14px;">For your first 3 months (then $19.99/mo). Unlocks all 9 desktop modules, live multi-grader comps, and 16-thread deal finder.</p>
+                    <div>
+                        <h3>First-Time Email Promo</h3>
+                        <div class="price">$10.00 / mo</div>
+                        <p style="color:#cbd5e1; font-size:14px;">For first 3 months (then $19.99/mo). Unlocks all 9 desktop modules & live 16-thread deal finder.</p>
+                    </div>
+                    <a href="/pay?tier=PROMO10" class="btn">Select Promo Tier</a>
                 </div>
                 <div class="card">
-                    <h3>Cloud Arbitrage Subscription</h3>
-                    <div class="price">$19.99 / mo</div>
-                    <p style="color:#cbd5e1; font-size:14px;">Standard monthly subscription. Includes automated 45-second market deal patrol, optical grading labs, and cloud updates.</p>
+                    <div>
+                        <h3>Cloud Arbitrage Sub</h3>
+                        <div class="price">$19.99 / mo</div>
+                        <p style="color:#cbd5e1; font-size:14px;">Standard monthly subscription. Includes automated 45-second market patrol & cloud updates.</p>
+                    </div>
+                    <a href="/pay?tier=SUB1999" class="btn">Select Subscription</a>
                 </div>
                 <div class="card">
-                    <h3>Full Perpetual License</h3>
-                    <div class="price">$1,000.00</div>
-                    <p style="color:#cbd5e1; font-size:14px;">One-time flat payment. Permanent lifetime commercial workstation license with zero recurring monthly fees.</p>
+                    <div>
+                        <h3>Full Perpetual License</h3>
+                        <div class="price">$1,000.00</div>
+                        <p style="color:#cbd5e1; font-size:14px;">One-time flat payment. Permanent lifetime commercial workstation license with zero monthly fees.</p>
+                    </div>
+                    <a href="/pay?tier=PERP1000" class="btn" style="background:#059669;">Buy Perpetual License</a>
                 </div>
             </div>
         </div>
         <div class="footer">
-            © 2026 AeroCardAIStudio™ — Created by Corbin Dothage. All Rights Reserved. | Support & Licensing Active
+            © 2026 AeroCardAIStudio™ — Created by Corbin Dothage. All Rights Reserved. | Secure TLS/SSL Cloud Handshake
         </div>
     </body>
     </html>
