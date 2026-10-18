@@ -8,12 +8,11 @@ app = Flask(__name__)
 MASTER_SALT = b"AEROCARD_CORBIN_DOTHAGE_SOLE_CREATOR_2026_VAULT"
 PAID_HWIDS = {}
 
-# Paste your actual Stripe Payment Links here once created in your Stripe Dashboard, 
-# or leave them pointing to the automated checkout endpoint route below:
+# Active subscription & perpetual license tiers linked to Stripe (including PROMO10)
 STRIPE_LINKS = {
-    "PROMO10": os.environ.get("STRIPE_PROMO10_URL", "https://buy.stripe.com/test_promo10"),
-    "SUB1999": os.environ.get("STRIPE_SUB1999_URL", "https://buy.stripe.com/test_sub1999"),
-    "PERP1000": os.environ.get("STRIPE_PERP1000_URL", "https://buy.stripe.com/test_perp1000"),
+    "PROMO10": os.environ.get("STRIPE_PROMO10_URL", "https://buy.stripe.com/YOUR_ACTUAL_PROMO10_LINK"),
+    "SUB1999": os.environ.get("STRIPE_SUB1999_URL", "https://buy.stripe.com/YOUR_ACTUAL_SUB_LINK"),
+    "PERP1000": os.environ.get("STRIPE_PERP1000_URL", "https://buy.stripe.com/YOUR_ACTUAL_PERP_LINK"),
 }
 
 def generate_key(hwid, tier_code):
@@ -23,13 +22,12 @@ def generate_key(hwid, tier_code):
 
 @app.route("/", methods=["GET"])
 def home():
-    """Official Public Business Homepage with Interactive Checkout Buttons."""
     return '''
     <!doctype html>
     <html lang="en">
     <head>
         <meta charset="utf-8">
-        <title>AeroCardAIStudio™ — Official Sports Card & TCG Forensic Software</title>
+        <title>AeroCardAIStudio™ — Official Sports Card & TCG Software</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <style>
             body { font-family: 'Segoe UI', Arial, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 0; }
@@ -47,28 +45,27 @@ def home():
         </style>
     </head>
     <body>
-        .header { background: #1e293b; padding: 28px 20px; text-align: center; border-bottom: 2px solid #0284c7; }
         <div class="header">
             <h1>AeroCardAIStudio™</h1>
-            <p>Professional Sports Card & TCG Computer Vision Grading, Market Valuation & Arbitrage Suite</p>
+            <p>Professional Sports Card & TCG Computer Vision Grading & Market Valuation Suite</p>
             <p style="font-size:13px; color:#cbd5e1;">Sole Creator & Owner: Corbin Dothage</p>
         </div>
         <div class="container">
-            <h2 style="text-align:center; margin-bottom:30px;">Official Software Licensing & Cloud Subscriptions</h2>
+            <h2 style="text-align:center; margin-bottom:30px;">Official Software Licensing & Subscriptions</h2>
             <div class="cards">
                 <div class="card">
                     <div>
                         <h3>First-Time Email Promo</h3>
                         <div class="price">$10.00 / mo</div>
-                        <p style="color:#cbd5e1; font-size:14px;">For first 3 months (then $19.99/mo). Unlocks all 9 desktop modules & live 16-thread deal finder.</p>
+                        <p style="color:#cbd5e1; font-size:14px;">First 3 months ($10/mo then $19.99/mo). Unlocks all 9 desktop modules & deal finder.</p>
                     </div>
                     <a href="/pay?tier=PROMO10" class="btn">Select Promo Tier</a>
                 </div>
                 <div class="card">
                     <div>
-                        <h3>Cloud Arbitrage Sub</h3>
+                        <h3>Cloud Subscription</h3>
                         <div class="price">$19.99 / mo</div>
-                        <p style="color:#cbd5e1; font-size:14px;">Standard monthly subscription. Includes automated 45-second market patrol & cloud updates.</p>
+                        <p style="color:#cbd5e1; font-size:14px;">Monthly recurring license. Unlocks all 9 desktop grading modules, live comps, and deal finder.</p>
                     </div>
                     <a href="/pay?tier=SUB1999" class="btn">Select Subscription</a>
                 </div>
@@ -76,14 +73,14 @@ def home():
                     <div>
                         <h3>Full Perpetual License</h3>
                         <div class="price">$1,000.00</div>
-                        <p style="color:#cbd5e1; font-size:14px;">One-time flat payment. Permanent lifetime commercial workstation license with zero monthly fees.</p>
+                        <p style="color:#cbd5e1; font-size:14px;">One-time flat payment. Permanent lifetime commercial workstation license with zero recurring monthly fees.</p>
                     </div>
                     <a href="/pay?tier=PERP1000" class="btn" style="background:#059669;">Buy Perpetual License</a>
                 </div>
             </div>
         </div>
         <div class="footer">
-            © 2026 AeroCardAIStudio™ — Created by Corbin Dothage. All Rights Reserved. | Secure TLS/SSL Cloud Handshake
+            © 2026 AeroCardAIStudio™ — Created by Corbin Dothage. All Rights Reserved.
         </div>
     </body>
     </html>
@@ -101,11 +98,11 @@ def pay_redirect():
 @app.route("/payment-success")
 def payment_success():
     hwid = request.args.get("hwid", "")
-    tier = request.args.get("tier", "PROMO10")
+    tier = request.args.get("tier", "SUB1999")
     if hwid:
         PAID_HWIDS[hwid] = tier
         key = generate_key(hwid, tier)
-        return f"<body style='font-family:sans-serif;text-align:center;padding:50px;background:#0f172a;color:#10b981;'><h2>✅ Payment Verified!</h2><p style='color:#f8fafc;'>Your AeroCardAIStudio™ Workstation (<b>{hwid}</b>) is unlocking automatically.</p><p style='color:#38bdf8;'>Backup Activation Key: <b>{key}</b></p></body>"
+        return f"<body style='font-family:sans-serif;text-align:center;padding:50px;background:#0f172a;color:#10b981;'><h2>✅ Payment Verified!</h2><p style='color:#f8fafc;'>Your Workstation (<b>{hwid}</b>) is unlocking automatically.</p><p style='color:#38bdf8;'>Activation Key: <b>{key}</b></p></body>"
     return "<h2>Thank you for your purchase!</h2>"
 
 @app.route("/api/check-license")
