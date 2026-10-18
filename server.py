@@ -10,8 +10,8 @@ PAID_HWIDS = {}
 
 # Active subscription & perpetual license tiers linked to Stripe (including PROMO10)
 STRIPE_LINKS = {
-    "PROMO10": os.environ.get("STRIPE_PROMO10_URL", "https://buy.stripe.com/3cIeVecU1cN5fbn0vIbMQ00"),
-    "SUB1999": os.environ.get("STRIPE_SUB1999_URL", "https://buy.stripe.com/3cIeVecU1cN5fbn0vIbMQ00"),
+    "SUB1999": os.environ.get("STRIPE_SUB1999_URL", "https://buy.stripe.com/eVq14obPX14n2oB1zMbMQ01"),
+    "PERP1000": os.environ.get("STRIPE_PERP1000_URL", "https://buy.stripe.com/6oU8wQg6d3cv5ANbambMQ02"),
 }
 
 def generate_key(hwid, tier_code):
